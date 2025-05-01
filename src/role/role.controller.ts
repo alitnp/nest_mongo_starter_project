@@ -1,0 +1,48 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { Roles } from 'src/role/role.decorator';
+import { RoleEnum } from 'src/role/role.enum';
+import { CreateRoleDto } from './dto/create-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
+import { RoleService } from './role.service';
+
+@Controller({
+  path: 'role',
+  version: '1',
+})
+export class RoleController {
+  constructor(private readonly roleService: RoleService) {}
+
+  @Post()
+  create(@Body() createRoleDto: CreateRoleDto) {
+    return this.roleService.create(createRoleDto);
+  }
+
+  @Roles(RoleEnum.Admin)
+  @Get()
+  findAll() {
+    return this.roleService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.roleService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+    return this.roleService.update(id, updateRoleDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.roleService.remove(id);
+  }
+}

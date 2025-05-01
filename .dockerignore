@@ -1,0 +1,28 @@
+# Node modules
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs
+*.log
+
+# Build output
+# dist
+
+# Environment files
+.env
+.env.*
+
+# Docker-related files
+Dockerfile
+docker-compose.yml
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db

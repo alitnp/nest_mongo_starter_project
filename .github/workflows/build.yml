@@ -1,0 +1,58 @@
+name: Build and Deploy NestJS App (Copy /dist)
+
+on:
+  push:
+    branches:
+      - development-server
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5433
+      POSTGRES_USER: ${{ secrets.ROBI_ADMIN_DEVELOPMENT_SERVER_POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.ROBI_ADMIN_DEVELOPMENT_SERVER_POSTGRES_PASSWORD }}
+      POSTGRES_DB: postgres
+      JWT_SECRET: ${{ secrets.ROBI_ADMIN_DEVELOPMENT_SERVER_JWT_SECRET }}
+      JWT_EXPIRATION_TIME: 24h
+      SALT_ROUNDS: 10
+      NODE_ENV: development
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build NestJS Project
+        run: npm run build
+
+      - name: Upload dist Folder and Files to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: 'dist/*,package.json,package-lock.json'
+          target: '~/app/robi_admin_nest'
+
+      - name: SSH into Server and Restart App
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          envs: POSTGRES_HOST,POSTGRES_PORT,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,JWT_SECRET,JWT_EXPIRATION_TIME,SALT_ROUNDS, NODE_ENV
+          script: |
+            cd ~/app/robi_admin_nest
+            npm install --only=production
+            pm2 delete robi-admin-nest || true
+            pm2 start dist/main.js --name robi-admin-nest --env production
