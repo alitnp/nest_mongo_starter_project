@@ -16,6 +16,13 @@ export const configuration = () => ({
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
     },
+    mongo: {
+      host: process.env.MONGO_HOST,
+      port: parseInt(process.env.MONGO_PORT || '27020'),
+      username: process.env.MONGO_INITDB_ROOT_USERNAME,
+      password: process.env.MONGO_INITDB_ROOT_PASSWORD,
+      database: process.env.MONGO_INITDB_DATABASE,
+    },
   },
   app: {
     defaultPageSize: 10,

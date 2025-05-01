@@ -33,7 +33,10 @@ import { UserModule } from './user/user.module';
     CacheModule.register({
       isGlobal: true,
     }),
-    MongooseModule.forRoot('mongodb://localhost/robi-admin-panel'),
+    MongooseModule.forRoot(
+      `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@localhost:${process.env.MONGO_PORT}/robi-admin-panel`,
+    ),
+    // MongooseModule.forRoot('mongodb://localhost/robi-admin-panel'),
     JwtModule,
     UserModule,
     AuthModule,

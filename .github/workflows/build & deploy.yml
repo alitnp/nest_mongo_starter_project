@@ -1,0 +1,82 @@
+name: Build and Deploy NestJS App (Copy /dist)
+
+on:
+  push:
+    branches:
+      - development-server
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      MONGO_INITDB_ROOT_USERNAME: ${{ secrets.ROBI_ADMIN_DEVELOPMENT_SERVER_MONGODB_USER }}
+      MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.ROBI_ADMIN_DEVELOPMENT_SERVER_MONGODB_PASSWORD }}
+      MONGO_INITDB_DATABASE: robi_admin_panel_test
+      MONGO_PORT: 27020
+      JWT_SECRET: ${{ secrets.ROBI_ADMIN_DEVELOPMENT_SERVER_JWT_SECRET }}
+      JWT_EXPIRATION_TIME: 24h
+      SALT_ROUNDS: 10
+      NODE_ENV: production
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build NestJS Project
+        run: npm run build
+
+      - name: Upload to Development Server
+        if: github.ref == 'refs/heads/development-server'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: 'dist/*,package.json,package-lock.json'
+          target: '~/app/robi_admin_panel_nest_test'
+
+      - name: Upload to Production Server
+        if: github.ref == 'refs/heads/production-server'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_SERVER_HOST }}
+          username: ${{ secrets.PROD_SERVER_USER }}
+          password: ${{ secrets.PROD_SERVER_PASSWORD }}
+          source: 'dist/*,package.json,package-lock.json'
+          target: '~/app/robi_admin_panel_nest_prod'
+
+      - name: SSH into Development Server and Restart App
+        if: github.ref == 'refs/heads/development-server'
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          envs: POSTGRES_HOST,POSTGRES_PORT,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,JWT_SECRET,JWT_EXPIRATION_TIME,SALT_ROUNDS, NODE_ENV
+          script: |
+            cd ~/app/robi_admin_panel_nest_test
+            npm install --only=production
+            pm2 delete robi_admin_panel_nest_test || true
+            pm2 start dist/main.js --name robi_admin_panel_nest_test --env production
+
+      - name: SSH into Production Server and Restart App
+        if: github.ref == 'refs/heads/production-server'
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.PROD_SERVER_HOST }}
+          username: ${{ secrets.PROD_SERVER_USER }}
+          password: ${{ secrets.PROD_SERVER_PASSWORD }}
+          script: |
+            cd ~/app/robi_admin_panel_nest_prod
+            npm install --only=production
+            pm2 delete robi_admin_panel_nest_prod || true
+            pm2 start dist/main.js --name robi_admin_panel_nest_prod --env production
