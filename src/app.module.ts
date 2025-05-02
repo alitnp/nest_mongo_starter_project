@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { configuration } from 'src/common/config/configuration';
 import { RolesGuard } from 'src/role/role.gaurd';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -34,7 +35,10 @@ import { UserModule } from './user/user.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-      `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@localhost:${process.env.MONGO_PORT}/robi-admin-panel`,
+      `mongodb://${configuration().db.mongo.userPass}${configuration().db.mongo.host}:${configuration().db.mongo.port}/admin`,
+      {
+        dbName: configuration().db.mongo.database,
+      },
     ),
     // MongooseModule.forRoot('mongodb://localhost/robi-admin-panel'),
     JwtModule,

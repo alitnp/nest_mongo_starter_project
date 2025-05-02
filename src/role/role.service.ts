@@ -2,8 +2,8 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BaseService } from 'src/common/services/baseService';
+import { Role } from 'src/role/role.entity';
 import { RoleDescriptions, RoleEnum } from 'src/role/role.enum';
-import { Role } from 'src/role/role.schema';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 

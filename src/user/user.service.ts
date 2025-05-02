@@ -15,7 +15,7 @@ import {
 import { RoleService } from 'src/role/role.service';
 import { UpdateUserDto } from 'src/user/dto/userUpdate.dto';
 import { UserWithPopulatedRolesDto } from 'src/user/dto/userWithPopulatedRoles.dto';
-import { User } from 'src/user/user.schema';
+import { User } from 'src/user/user.entity';
 import { CreateUserDto } from './dto/userCreate.dto';
 
 @Injectable()

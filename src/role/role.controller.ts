@@ -7,8 +7,6 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { Roles } from 'src/role/role.decorator';
-import { RoleEnum } from 'src/role/role.enum';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleService } from './role.service';
@@ -25,7 +23,7 @@ export class RoleController {
     return this.roleService.create(createRoleDto);
   }
 
-  @Roles(RoleEnum.Admin)
+  // @Roles(RoleEnum.Admin)
   @Get()
   findAll() {
     return this.roleService.findAll();

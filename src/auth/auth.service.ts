@@ -6,7 +6,7 @@ import {
   SuccessResponse,
   SuccessResponseData,
 } from 'src/common/utils/responseStandardizer';
-import { User } from 'src/user/user.schema';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()

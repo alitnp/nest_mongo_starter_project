@@ -7,6 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiCreatedResponse } from '@nestjs/swagger';
 import { Public } from 'src/auth/auth.decorator';
 import { Roles } from 'src/role/role.decorator';
 import { RoleEnum } from 'src/role/role.enum';
@@ -14,17 +15,22 @@ import { UserAddRoleDto } from 'src/user/dto/userAddRole.dto';
 import { CreateUserDto } from 'src/user/dto/userCreate.dto';
 import { UserRemoveRoleDto } from 'src/user/dto/userRemoveRole.dto';
 import { UpdateUserDto } from 'src/user/dto/userUpdate.dto';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Controller({
   path: 'user',
   version: '1',
 })
+@ApiBearerAuth()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Public()
   @Post()
+  @ApiCreatedResponse({
+    type: User,
+  })
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }

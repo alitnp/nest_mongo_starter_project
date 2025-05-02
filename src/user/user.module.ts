@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RoleModule } from 'src/role/role.module';
-import { User, UserSchema } from 'src/user/user.schema';
+import { User, UserSchema } from 'src/user/user.entity';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
