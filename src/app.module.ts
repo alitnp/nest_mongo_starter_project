@@ -11,9 +11,9 @@ import { RolesGuard } from 'src/role/role.gaurd';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { PostModule } from './post/post.module';
 import { RoleModule } from './role/role.module';
 import { UserModule } from './user/user.module';
-import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -36,7 +36,7 @@ import { PostModule } from './post/post.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-      `mongodb://admin2:admin2@localhost:27017/test_nest_db?authSource=admin`,
+      `mongodb://${configuration().db.mongo.userPass}localhost:27017/test_nest_db?authSource=admin`,
       {
         dbName: configuration().db.mongo.database,
       },
