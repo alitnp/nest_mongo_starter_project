@@ -11,7 +11,7 @@ import { IS_PUBLIC_KEY } from 'src/auth/auth.decorator';
 import { configuration } from 'src/common/config/configuration';
 
 export interface requestUser {
-  id: number;
+  id: string;
   email: string;
   roles: string[];
 }

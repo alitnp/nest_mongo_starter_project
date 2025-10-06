@@ -12,7 +12,7 @@ jobs:
     env:
       MONGO_INITDB_USER_PASS: ${{ secrets.MONGO_INITDB_USER_PASS }}
       MONGO_INITDB_HOST: localhost
-      MONGO_INITDB_DATABASE: robi_admin_panel_test
+      MONGO_INITDB_DATABASE: test_nest_db
       MONGO_PORT: 27020
       JWT_SECRET: ${{ secrets.ROBI_ADMIN_DEVELOPMENT_SERVER_JWT_SECRET }}
       JWT_EXPIRATION_TIME: 24h

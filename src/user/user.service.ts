@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
@@ -15,20 +16,27 @@ import {
 import { RoleService } from 'src/role/role.service';
 import { UpdateUserDto } from 'src/user/dto/userUpdate.dto';
 import { UserWithPopulatedRolesDto } from 'src/user/dto/userWithPopulatedRoles.dto';
+import { createFakeUser } from 'src/user/services/createFakeUser';
 import { User } from 'src/user/user.entity';
 import { CreateUserDto } from './dto/userCreate.dto';
 
 @Injectable()
-export class UserService extends BaseService<
-  User,
-  CreateUserDto,
-  UpdateUserDto
-> {
+export class UserService
+  extends BaseService<User, CreateUserDto, UpdateUserDto>
+  implements OnModuleInit
+{
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly roleService: RoleService,
   ) {
     super(userModel, ['username'], '-password', 'roles');
+  }
+
+  async onModuleInit() {
+    const userCount = await this.userModel.countDocuments().exec();
+    if (userCount === 0) {
+      await createFakeUser(this.userModel);
+    }
   }
 
   async findByUserName(

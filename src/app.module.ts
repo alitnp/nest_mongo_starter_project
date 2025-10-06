@@ -13,6 +13,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { RoleModule } from './role/role.module';
 import { UserModule } from './user/user.module';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { UserModule } from './user/user.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-      `mongodb://${configuration().db.mongo.userPass}${configuration().db.mongo.host}:${configuration().db.mongo.port}/admin`,
+      `mongodb://admin2:admin2@localhost:27017/test_nest_db?authSource=admin`,
       {
         dbName: configuration().db.mongo.database,
       },
@@ -45,6 +46,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     AuthModule,
     RoleModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [
